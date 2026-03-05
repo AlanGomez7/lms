@@ -22,7 +22,15 @@ app.set("view engine", "ejs");
 // Routes
 app.use('/', userRoutes);
 app.use('/admin', adminRoutes);
-app.use('/books', bookRoutes)
+app.use('/books', bookRoutes);
 
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(err.status || 500);
+    res.render('error', {
+        message: err.message,
+    });
+});
 
 export default app;
