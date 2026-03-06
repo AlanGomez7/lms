@@ -1,7 +1,7 @@
 import * as bookServices from "../services/bookServices.js";
 import { validationResult } from "express-validator";
 
-export const getBookById = async (req, res) => {
+export const getBookById = async (req, res, next) => {
     try {
         const bookId = req.params.id;
         if (!bookId) {
@@ -15,6 +15,22 @@ export const getBookById = async (req, res) => {
     };
 }
 
+export const getAllBooks = async (req, res, next)=>{
+    try{
+        const page = JSON.parse(req.query.page, 10) || 1;
+        const limit = JSON.parse(req.query.limit, 10) || 10;
+
+        const skip = (page - 1 ) * limit;
+
+        const length = await bookServices.NumberOfBooks();
+        const books = await bookServices.getAllBooks(skip, limit);
+        console.log(books)
+        res.render('users/home', {books: books, length: Math.ceil(length/limit), currentPage:page});
+    }catch(err){
+        console.log(err)
+    }
+}
+
 export const addBook = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -26,6 +42,7 @@ export const addBook = async (req, res) => {
         const data = await bookServices.addBook(req.body);
 
         res.status(200).json(data);
+        
     } catch (err) {
         console.log(err)
         res.status(500).json({ error: 'Something went wrong' });

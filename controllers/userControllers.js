@@ -1,3 +1,3 @@
 export const getUsers = (req, res)=>{
-    res.render("users/userHome");
+    res.render("users/home");
 };

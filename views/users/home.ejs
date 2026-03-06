@@ -1,5 +1,71 @@
 <%- include('../partials/header')%>
-<main>
-    <h1>Hello world!!!</h1>
-</main>
-<%- include('../partials/footer')%>
+    <main class="container py-5">
+        <%- include('../partials/search') %>
+        
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th scope="col">sl no</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">isbn</th>
+                    <th scope="col">Publisher</th>
+                    <th scope="col">Page</th>
+                    <th scope="col">available no</th>
+                </tr>
+            </thead>
+            <tbody>
+                <%books.forEach((book, index)=>{%>
+                    <tr>
+                        <th scope="row">
+                            <%=index+1%>
+                        </th>
+                        <td>
+                            <%=book.title%>
+                        </td>
+                        <td>
+                            <%=book.isbn%>
+                        </td>
+                        <td>
+                            <%=book.publisher%>
+                        </td>
+                        <td>
+                            <%=book.pages%>
+                        </td>
+                        <td>
+                            <%=book.available_copies%>
+                        </td>
+                    </tr>
+                    <%})%>
+            </tbody>
+        </table>
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="page-item <%=currentPage === 1 ? " disabled" : "" %> shadow-none">
+                    <a class="page-link text-dark" href="<%= `/books?page=${currentPage - 1}&limit=${10}` %>"
+                        aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+
+                <%for(let i=1; i <=length; i++){%>
+                    <li class="page-item <%=currentPage === i ? 'active': ''%>">
+                        <a class="page-link text-dark" href="<%=`/books?page=${i}&limit=${10}`%>">
+                            <%= i %>
+                        </a>
+                    </li>
+                    <%}%>
+
+                        <li class="page-item <%=currentPage === length ? " disabled" : "" %> shadow-none">
+                            <a class="page-link text-dark" href="<%= `/books?page=${currentPage + 1}&limit=${10}` %>"
+                                aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                                <span class="sr-only">Next</span>
+                            </a>
+                        </li>
+            </ul>
+        </nav>
+    </main>
+
+    <%- include('../partials/footer')%>

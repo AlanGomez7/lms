@@ -19,10 +19,16 @@ const __dirname = path.dirname(__filename);
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
+app.use(express.static(path.join(__dirname, "public")));
+
 // Routes
 app.use('/', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/books', bookRoutes);
+
+app.use((req, res)=>{
+    res.status(404).json('not found')
+})
 
 
 app.use((err, req, res, next) => {
@@ -31,6 +37,7 @@ app.use((err, req, res, next) => {
     res.render('error', {
         message: err.message,
     });
+    next()
 });
 
 export default app;
