@@ -1,13 +1,16 @@
 import express from 'express';
 import userRoutes from './routes/userRoutes.js';
 import adminRoutes from './routes/adminRoutes.js';
-import bookRoutes from './routes/bookRoutes.js'
+import bookRoutes from './routes/bookRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dbConnection from './config/connection.js';
 
 const app = express();
+
 app.use(express.json());
+app.use(express.urlencoded({ limit: "50mb", extended: false }));
 
 // db connection
 dbConnection();
@@ -25,10 +28,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use('/', userRoutes);
 app.use('/admin', adminRoutes);
 app.use('/books', bookRoutes);
+app.use('/auth', authRoutes);
+
 
 app.use((req, res)=>{
-    res.status(404).json('not found')
-})
+    res.status(404).json('not found');
+});
 
 
 app.use((err, req, res, next) => {
@@ -37,7 +42,8 @@ app.use((err, req, res, next) => {
     res.render('error', {
         message: err.message,
     });
-    next()
+    next();
 });
+
 
 export default app;

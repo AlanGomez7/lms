@@ -5,31 +5,32 @@ export const getBookById = async (req, res, next) => {
     try {
         const bookId = req.params.id;
         if (!bookId) {
-            res.render("/error", { error: '' });
+            res.render("error", { error: '' });
         }
         const data = getBook(bookId);
 
         res.render('users/home', { book: data });
     } catch (err) {
-        res.render('/error', { error: 'Something went wrong' });
+        res.render('error', { error: 'Something went wrong' });
     };
-}
+};
 
-export const getAllBooks = async (req, res, next)=>{
-    try{
-        const page = JSON.parse(req.query.page, 10) || 1;
-        const limit = JSON.parse(req.query.limit, 10) || 10;
+export const getAllBooks = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
 
-        const skip = (page - 1 ) * limit;
+        const skip = (page - 1) * limit;
 
         const length = await bookServices.NumberOfBooks();
         const books = await bookServices.getAllBooks(skip, limit);
-        console.log(books)
-        res.render('users/home', {books: books, length: Math.ceil(length/limit), currentPage:page});
-    }catch(err){
-        console.log(err)
-    }
-}
+
+        res.render('users/home', { books: books, length: Math.ceil(length / limit), currentPage: page });
+    } catch (err) {
+        console.log(err);
+        next(err);
+    };
+};
 
 export const addBook = async (req, res) => {
     try {
@@ -42,12 +43,12 @@ export const addBook = async (req, res) => {
         const data = await bookServices.addBook(req.body);
 
         res.status(200).json(data);
-        
+
     } catch (err) {
         console.log(err)
         res.status(500).json({ error: 'Something went wrong' });
     };
-}
+};
 
 export const deleteBook = async (req, res) => {
     try {
@@ -59,8 +60,49 @@ export const deleteBook = async (req, res) => {
 
         const response = await bookServices.deleteBook(id);
         res.status(200).json({ message: 'Book deleted successfully', data: response });
-        
+
     } catch (err) {
-        next(err);  
+        next(err);
+    }
+};
+
+export const search = async (req, res, next) => {
+    try {
+        const searchQuery = (req.query.data || "").trim();
+        const page = parseInt(req?.query?.page, 10) || 1;
+        const limit = 10;
+
+        const skip = (page - 1) * limit;
+
+        if (searchQuery.trim() === '') {
+            return res.status(400).json({ message: 'Invalid input' });
+        }
+        const totalCount = await bookServices.searchQueryCount(searchQuery);
+        const queryResult = await bookServices.searchBook(searchQuery, skip, limit);
+
+        res.render("users/home",
+            {
+                books: queryResult,
+                currentPage: page,
+                length: Math.ceil(totalCount / limit)
+            }
+        ); 
+
+    } catch (err) {
+        console.log(err)
+        next(err);
+    }
+};
+
+export const requestBook = (req, res, next) => {
+    try{
+        const bookId = req.params.id;
+        res.status(200).json({id: bookId});
+    }catch(err){
+        next(err);
     }
 }
+
+
+
+

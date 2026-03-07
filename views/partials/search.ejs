@@ -1,5 +1,22 @@
-<div class="input-group input-group-lg">
-    <input type="text" class="form-control shadow-none" id="search-input" aria-label="Sizing example input"
-        aria-describedby="inputGroup-sizing-lg" placeholder="Search your favorite books">
-    <button class="btn btn-primary large" id="search-btn" onclick="handleSearch()">Search Books</button>
+<div class="container-fluid px-3">
+  <form action="/books/search" method="get" class="row g-2">
+    <div class="col-12 col-md-9">
+      <input
+        type="text"
+        name="data"
+        class="form-control form-control-lg"
+        id="search-input"
+        placeholder="Search your favorite books by Name or ISBN"
+      />
+    </div>
+    <div class="col-12 col-md-3 d-grid">
+      <button
+        type="submit"
+        class="btn btn-primary btn-lg"
+        id="search-btn"
+      >
+        Search Books
+      </button>
+    </div>
+  </form>
 </div>

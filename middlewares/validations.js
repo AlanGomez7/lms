@@ -1,108 +1,161 @@
-import { checkSchema } from 'express-validator';
+import { body, checkSchema } from 'express-validator';
 
-export const bookValidationSchema = checkSchema({
-  title: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Title is required"
+export const bookValidationSchema = checkSchema(
+  {
+    "*.title": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Title is required"
+      },
+      trim: true
     },
-    trim: true
-  },
 
-  author: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Author is required"
+    "*.author": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Author is required"
+      },
+      trim: true
     },
-    trim: true
-  },
 
-  isbn: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "ISBN is required"
+    "*.isbn": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "ISBN is required"
+      },
+      trim: true,
+      isLength: {
+        options: { min: 10, max: 13 },
+        errorMessage: "ISBN must be between 10 and 13 characters"
+      }
     },
-    trim: true,
-    isLength: {
-      options: { min: 10, max: 13 },
-      errorMessage: "ISBN must be between 10 and 13 characters"
-    }
-  },
 
-  category: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Category is required"
+    "*.category": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Category is required"
+      },
+      trim: true
     },
-    trim: true
-  },
 
-  published_year: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Published year is required"
+    "*.published_year": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Published year is required"
+      },
+      isInt: {
+        options: { min: 0 },
+        errorMessage: "Published year must be a valid number"
+      }
     },
-    isInt: {
-      options: { min: 0 },
-      errorMessage: "Published year must be a valid number"
-    }
-  },
 
-  publisher: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Publisher is required"
+    "*.publisher": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Publisher is required"
+      },
+      trim: true
     },
-    trim: true
-  },
 
-  language: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Language is required"
+    "*.language": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Language is required"
+      },
+      trim: true
     },
-    trim: true
-  },
 
-  pages: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Pages are required"
+    "*.pages": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Pages are required"
+      },
+      isInt: {
+        options: { min: 1 },
+        errorMessage: "Pages must be at least 1"
+      }
     },
-    isInt: {
-      options: { min: 1 },
-      errorMessage: "Pages must be at least 1"
-    }
-  },
 
-  total_copies: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Total copies are required"
+    "*.total_copies": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Total copies are required"
+      },
+      isInt: {
+        options: { min: 0 },
+        errorMessage: "Total copies must be 0 or greater"
+      }
     },
-    isInt: {
-      options: { min: 0 },
-      errorMessage: "Total copies must be 0 or greater"
-    }
-  },
 
-  available_copies: {
-    in: ["body"],
-    notEmpty: {
-      errorMessage: "Available copies are required"
-    },
-    isInt: {
-      options: { min: 0 },
-      errorMessage: "Available copies must be 0 or greater"
-    },
-    custom: {
-      options: (value, { req }) => {
-        if (value > req.body.total_copies) {
-          throw new Error("Available copies cannot exceed total copies");
+    "*.available_copies": {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Available copies are required"
+      },
+      isInt: {
+        options: { min: 0 },
+        errorMessage: "Available copies must be 0 or greater"
+      },
+      custom: {
+        options: (value, { req }) => {
+          if (value > req.body.total_copies) {
+            throw new Error("Available copies cannot exceed total copies");
+          }
+          return true;
         }
-        return true;
+      }
+    }
+  });
+
+export const userValidationSchema = checkSchema(
+  {
+    name: {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Name is required"
+      },
+      trim: true
+    },
+    email: {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Email is required"
+      },
+      isEmail: {
+        errorMessage: "Email is invalid"
+      }
+    },
+    password: {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Password must not be empty"
+      },
+      isStrongPassword: {
+        errorMessage: "Enter a strong password"
+      }
+    },
+    confirmPassword: {
+      in: ["body"],
+      notEmpty: {
+        errorMessage: "Password must not be empty"
+      },
+      isStrongPassword: {
+        options: {
+          minLength: 8,
+          minLowercase: 1,
+          minUppercase: 1,
+          minNumbers: 1,
+          minSymbols: 1,
+        },
+        errorMessage: "Enter a strong password"
+      },
+      
+      custom: (value, { req }) => {
+        if (value !== req.body.confirmPassowrd) {
+          throw new Error("Password and confirm password should be same");
+        }
       }
     }
   }
-});
+)
 

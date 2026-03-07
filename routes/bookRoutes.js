@@ -3,7 +3,10 @@ import {
     addBook,
     deleteBook,
     getBookById,
-    getAllBooks
+    getAllBooks,
+    search,
+    requestBook,
+    
 } from '../controllers/bookControllers.js';
 import { bookValidationSchema } from '../middlewares/validations.js'
 
@@ -12,12 +15,12 @@ import { bookValidationSchema } from '../middlewares/validations.js'
 const router = express.Router();
 
 router.get('/', getAllBooks);
+router.get('/search', search);
 router.get('/:id', getBookById);
 router.post('/add', bookValidationSchema, addBook);
 router.delete('/delete/:id', deleteBook);
+router.get('/request/:id', requestBook);
 
-// router.get('/', getBooks);
-// router.get('/search', search);
-// router.put('/update/:id', updateBook);
+
 
 export default router;
